@@ -1,0 +1,195 @@
+hml_light_template:
+    variables:
+      var_name: ''
+      var_hml_entity: ''
+    triggers_update:
+      - '[[[ return variables.var_hml_entity; ]]]'
+    styles:
+      card:
+        - display: flex
+        - flex-direction: column
+        - justify-content: flex-start
+        - align-items: stretch
+        - border-radius: 0
+        - padding: 0
+        - shadow-box: none
+        - background: none
+        - border: none
+      grid:
+        - grid-template-areas: '"bubble"'
+        - grid-template-columns: 1fr
+        - grid-template-rows: auto
+    custom_fields:
+      bubble:
+        card:
+          type: custom:bubble-card
+          icon: mdi:lamp-outline
+          show_bubble: false
+          card_type: button
+          button_type: name
+          entity: null
+          name: '[[[ return `${variables.var_name}`; ]]]'
+          show_icon: false
+          force_icon: false
+          scrolling_effect: false
+          show_name: true
+          show_state: false
+          show_last_changed: false
+          show_attribute: false
+          tap_action:
+            action: call-service
+            service: input_select.select_option
+            service_data:
+              entity_id: '[[[ return `${variables.var_hml_entity}`; ]]]'
+              option: >-
+                [[[ return states[variables.var_hml_entity]?.state === 'off' ?
+                'low' : 'off'; ]]]
+            target:
+              entity_id: '[[[ return `${variables.var_hml_entity}`; ]]]'
+          double_tap_action:
+            action: none
+          hold_action:
+            action: none
+          button_action:
+            tap_action:
+              action: call-service
+              service: input_select.select_option
+              service_data:
+                entity_id: '[[[ return `${variables.var_hml_entity}`; ]]]'
+                option: >-
+                  [[[ return states[variables.var_hml_entity]?.state === 'off' ?
+                  'low' : 'off'; ]]]
+              target:
+                entity_id: '[[[ return `${variables.var_hml_entity}`; ]]]'
+            double_tap_action:
+              action: none
+            hold_action:
+              action: none
+          styles: |
+            [[[
+              const state = states[variables.var_hml_entity]?.state;
+              const isOff = ['off'].includes(states[variables.var_hml_entity]?.state);
+              const isLow = ['low'].includes(states[variables.var_hml_entity]?.state);
+              const isMed = ['medium'].includes(states[variables.var_hml_entity]?.state);
+              const isHigh = states[variables.var_hml_entity]?.state === 'high';
+              
+              const text_color_pressed = 'black';
+              const text_color_raised = 'black';
+              const label_color = 'white';
+
+              // raised: light
+              // pressed: dark
+              const raised_button = 'linear-gradient(to bottom, #6C757D, #495057)';
+              const pressed_button = 'linear-gradient(to bottom, #F8F9FA, #F8F9FA)';  // Warm White
+
+              // raised: dark
+              // pressed: light
+              //const raised_button = 'linear-gradient(to bottom, #F8F9FA, #F8F9FA)';
+              //const pressed_button = 'linear-gradient(to bottom, #6C757D, #495057)';  // Warm White
+              
+              const off_gradient = 'linear-gradient(to left, #5D6D7E, #2C3E50)'; // gray gradient
+              const on_gradient = 'linear-gradient(to left, lightgreen, darkgreen)';
+              
+              const raised_shadow = '2px 2px 4px rgba(0, 0, 0, 0.3), -1px -1px 2px rgba(255, 255, 255, 0.4)';
+              const pressed_shadow = 'inset 2px 2px 4px rgba(0, 0, 0, 0.4), inset -1px -1px 2px rgba(255, 255, 255, 0.2)';
+
+              return `
+                .bubble-button-card-container {
+                  text-align: left !important;
+                  color: ${isOff ? 'white' : 'white'} !important;
+                  background-image: ${ isOff 
+                    ? off_gradient 
+                    : on_gradient
+                  } !important;
+                  pointer-events: auto !important;
+                }
+                .bubble-sub-button-1 {
+                  background-image: ${ isLow
+                    ? pressed_button
+                    : raised_button
+                  } !important;
+                  color: ${ isLow
+                    ? text_color_pressed
+                    : text_color_raised
+                  } !important;
+                  box-shadow: ${ isLow
+                    ? pressed_shadow
+                    : raised_shadow
+                  } !important;
+                }
+                .bubble-sub-button-2 {
+                  background-image: ${ isMed
+                    ? pressed_button
+                    : raised_button
+                  } !important;
+                  color: ${ isMed
+                    ? text_color_pressed
+                    : text_color_raised
+                  } !important;
+                  box-shadow: ${ isMed
+                    ? pressed_shadow
+                    : raised_shadow
+                  } !important;
+                }
+                .bubble-sub-button-3 {
+                  background-image: ${ isHigh
+                    ? pressed_button
+                    : raised_button
+                  } !important;
+                  color: ${ isHigh
+                    ? text_color_pressed
+                    : text_color_raised
+                  } !important;
+                  box-shadow: ${ isHigh
+                    ? pressed_shadow
+                    : raised_shadow
+                  } !important;
+                }
+                .bubble-card-container {
+                  text-align: left;
+                }
+                .bubble-name {
+                  text-align: left;
+                }
+              `;
+            ]]]
+          sub_button:
+            - name: Low
+              show_arrow: false
+              show_icon: false
+              show_name: true
+              show_background: true
+              tap_action:
+                action: call-service
+                service: input_select.select_option
+                service_data:
+                  entity_id: '[[[ return `${variables.var_hml_entity}`; ]]]'
+                  option: low
+                target:
+                  entity_id: '[[[ return `${variables.var_hml_entity}`; ]]]'
+            - name: Med
+              show_icon: false
+              show_arrow: false
+              show_name: true
+              show_background: true
+              tap_action:
+                action: call-service
+                service: input_select.select_option
+                service_data:
+                  entity_id: '[[[ return `${variables.var_hml_entity}`; ]]]'
+                  option: medium
+                target:
+                  entity_id: '[[[ return `${variables.var_hml_entity}`; ]]]'
+            - name: High
+              show_icon: false
+              show_arrow: false
+              show_name: true
+              show_background: true
+              tap_action:
+                action: call-service
+                service: input_select.select_option
+                service_data:
+                  entity_id: '[[[ return `${variables.var_hml_entity}`; ]]]'
+                  option: high
+                target:
+                  entity_id: '[[[ return `${variables.var_hml_entity}`; ]]]'
